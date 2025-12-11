@@ -31,6 +31,7 @@ export function Header() {
                 <Link
                   key={item.path}
                   to={item.path}
+                  aria-label={item.label}
                   className={cn(
                     'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
                     'transition-all duration-200',
