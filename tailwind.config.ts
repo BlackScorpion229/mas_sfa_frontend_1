@@ -83,6 +83,10 @@ export default {
 				DEFAULT: 'hsl(var(--muted))',
 				foreground: 'hsl(var(--muted-foreground))'
 			},
+			accent: {
+				DEFAULT: 'hsl(var(--accent))',
+				foreground: 'hsl(var(--accent-foreground))'
+			},
 			popover: {
 				DEFAULT: 'hsl(var(--popover))',
 				foreground: 'hsl(var(--popover-foreground))'
@@ -110,18 +114,6 @@ export default {
 				green: 'hsl(var(--metric-green))',
 				yellow: 'hsl(var(--metric-yellow))',
 				red: 'hsl(var(--metric-red))'
-			},
-			accent: {
-				50: 'hsl(var(--accent-50))',
-				100: 'hsl(var(--accent-100))',
-				200: 'hsl(var(--accent-200))',
-				300: 'hsl(var(--accent-300))',
-				400: 'hsl(var(--accent-400))',
-				500: 'hsl(var(--accent-500))',
-				600: 'hsl(var(--accent-600))',
-				700: 'hsl(var(--accent-700))',
-				DEFAULT: 'hsl(var(--accent-500))',
-				foreground: 'hsl(var(--primary-foreground))'
 			}
 		},
   		borderRadius: {
