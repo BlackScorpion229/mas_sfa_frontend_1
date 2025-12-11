@@ -109,9 +109,9 @@ export default function Index() {
               <div className="p-3 rounded-xl bg-primary/10 w-fit mb-4 group-hover:bg-primary/20 transition-colors">
                 <feature.icon className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground mb-2">
+              <h2 className="text-lg font-semibold text-foreground mb-2">
                 {feature.title}
-              </h3>
+              </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
