@@ -3,29 +3,42 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
+import { ThemeConfigProvider } from "@/components/theme/ThemeContext";
 import Index from "./pages/Index";
 import IndustryAnalysis from "./pages/IndustryAnalysis";
 import StockAnalysis from "./pages/StockAnalysis";
 import Chat from "./pages/Chat";
+import ThemeDemo from "./pages/ThemeDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/industry/:industry" element={<IndustryAnalysis />} />
-          <Route path="/stock/:ticker" element={<StockAnalysis />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <ThemeConfigProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/industry/:industry" element={<IndustryAnalysis />} />
+              <Route path="/stock/:ticker" element={<StockAnalysis />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/demo/theme" element={<ThemeDemo />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeConfigProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
