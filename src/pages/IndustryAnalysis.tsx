@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +7,7 @@ import { BenchmarksTable } from '@/components/BenchmarksTable';
 import { InsightsCard } from '@/components/InsightsCard';
 import { PeerStocksSection } from '@/components/PeerStocksSection';
 import { TrendMiniChart } from '@/components/TrendMiniChart';
-import { generateIndustryBenchmark } from '@/data/mockData';
-import { IndustryBenchmark } from '@/types';
+import { useIndustryBenchmark } from '@/hooks/useIndustryBenchmark';
 import { cn } from '@/lib/utils';
 import {
   ArrowLeft,
@@ -39,21 +37,8 @@ const cycleColors: Record<string, string> = {
 
 export default function IndustryAnalysis() {
   const { industry } = useParams<{ industry: string }>();
-  const [data, setData] = useState<IndustryBenchmark | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      if (industry) {
-        setData(generateIndustryBenchmark(decodeURIComponent(industry)));
-      }
-      setIsLoading(false);
-    };
-    loadData();
-  }, [industry]);
+  const decodedIndustry = industry ? decodeURIComponent(industry) : undefined;
+  const { data, isLoading, error } = useIndustryBenchmark(decodedIndustry);
 
   if (isLoading) {
     return (
@@ -67,12 +52,12 @@ export default function IndustryAnalysis() {
     );
   }
 
-  if (!data) {
+  if (error || !data) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container py-16 text-center">
-          <p className="text-muted-foreground">Industry not found</p>
+          <p className="text-muted-foreground">{error || 'Industry not found'}</p>
         </div>
       </div>
     );
