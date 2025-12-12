@@ -1,34 +1,19 @@
-import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { ModuleCard } from '@/components/ModuleCard';
 import { HealthScorePanel } from '@/components/HealthScorePanel';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { generateStockAnalysis } from '@/data/mockData';
-import { StockAnalysis as StockAnalysisType } from '@/types';
+import { useStockAnalysis } from '@/hooks/useStockAnalysis';
 import { ArrowLeft, Building2, MessageSquare, Loader2 } from 'lucide-react';
 
 export default function StockAnalysis() {
   const { ticker } = useParams<{ ticker: string }>();
   const [searchParams] = useSearchParams();
   const industry = searchParams.get('industry') || 'Unknown';
+  const decodedIndustry = decodeURIComponent(industry);
   
-  const [data, setData] = useState<StockAnalysisType | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      if (ticker) {
-        setData(generateStockAnalysis(ticker, decodeURIComponent(industry)));
-      }
-      setIsLoading(false);
-    };
-    loadData();
-  }, [ticker, industry]);
+  const { data, isLoading, error } = useStockAnalysis(ticker, decodedIndustry);
 
   if (isLoading) {
     return (
@@ -43,12 +28,12 @@ export default function StockAnalysis() {
     );
   }
 
-  if (!data) {
+  if (error || !data) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container py-16 text-center">
-          <p className="text-muted-foreground">Stock not found</p>
+          <p className="text-muted-foreground">{error || 'Stock not found'}</p>
         </div>
       </div>
     );
