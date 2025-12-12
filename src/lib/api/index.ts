@@ -4,7 +4,7 @@
  * Central export point for all API functionality.
  * 
  * @example
- * import { postIndustryBenchmark, isApiError, getApiBaseUrl } from '@/lib/api';
+ * import { postIndustryBenchmark, postBorrowingsAnalyze, isApiError } from '@/lib/api';
  * 
  * try {
  *   const data = await postIndustryBenchmark('Banking');
@@ -16,16 +16,34 @@
  * }
  */
 
+// Configuration
+export { API_BASE, DEFAULT_BASE_URL, REQUEST_TIMEOUT } from './config';
+
 // Client utilities
-export { apiClient, getApiBaseUrl, isApiError, normalizeError } from './client';
+export { apiClient, apiFetch, getApiBaseUrl, isApiError, normalizeError, request } from './client';
+
+// Normalization utilities
+export { normalizePayload, normalizeFinancialPayload, toSnakeCase, parsePercentage } from './normalize';
 
 // API endpoint functions
 export {
+  // Industry & Stock endpoints
   postIndustryBenchmark,
   postStockFundamentals,
   postAnalyzeStock,
   postChat,
+  isUsingMockIndustryData,
+  // Module analyze endpoints
+  postBorrowingsAnalyze,
+  postAssetQualityAnalyze,
+  postWorkingCapitalAnalyze,
+  postCapexCwipAnalyze,
+  postLiquidityAnalyze,
+  postAllModulesAnalyze,
 } from './endpoints';
+
+// Mock data (for fallback)
+export { generateMockIndustryBenchmark } from './mockIndustryBenchmark';
 
 // Types
 export type {
@@ -38,4 +56,6 @@ export type {
   StockAnalysisResponse,
   ChatRequest,
   ChatResponse,
+  ModuleAnalyzeResponse,
+  FinancialDataPayload,
 } from './types';

@@ -1,6 +1,7 @@
 import { IndustryBenchmark, StockAnalysis, StockModule } from '@/types';
 
 export const industries = [
+  'General',
   'Banking',
   'Healthcare',
   'Retail',
