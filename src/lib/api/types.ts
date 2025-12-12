@@ -67,3 +67,37 @@ export interface ChatResponse {
   content: string;
   timestamp?: string;
 }
+
+/**
+ * Module Analyze Response
+ * 
+ * Generic response type for module analyze endpoints.
+ * Each module may return different data structures,
+ * so this is intentionally flexible.
+ */
+export interface ModuleAnalyzeResponse {
+  module_name?: string;
+  status?: string;
+  analysis?: unknown;
+  metrics?: Record<string, unknown>;
+  insights?: string[];
+  warnings?: string[];
+  errors?: string[];
+  [key: string]: unknown;
+}
+
+/**
+ * Financial Data Payload
+ * 
+ * Structure for the financial data sent to module analyze endpoints.
+ * Keys should be in snake_case and percentages should be decimal fractions.
+ */
+export interface FinancialDataPayload {
+  company: string;
+  financial_data: {
+    financial_years: Array<{
+      year: number;
+      [key: string]: unknown;
+    }>;
+  };
+}

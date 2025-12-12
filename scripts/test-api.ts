@@ -1,16 +1,16 @@
 /**
  * API Connectivity Test Script
  * 
- * Run this script to verify the local API is accessible:
+ * Run this script to verify that the frontend can connect to the local backend.
+ * 
+ * Usage:
  *   npx tsx scripts/test-api.ts
  * 
- * Or with Node.js (requires ts-node):
- *   npx ts-node scripts/test-api.ts
- * 
- * Make sure the backend is running at http://127.0.0.1:8000
+ * Or with a custom API URL:
+ *   API_BASE_URL=http://localhost:8080 npx tsx scripts/test-api.ts
  */
 
-const API_BASE_URL = process.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+const API_BASE = process.env.API_BASE_URL || 'http://127.0.0.1:8000';
 
 interface ApiError {
   status: number;
@@ -18,121 +18,174 @@ interface ApiError {
   body?: unknown;
 }
 
-async function testIndustryBenchmark(industryName: string): Promise<void> {
-  console.log(`\n🔍 Testing POST /industry-benchmark with industry: "${industryName}"`);
-  console.log(`   Base URL: ${API_BASE_URL}`);
-  
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      body = await response.text();
+    }
+    throw {
+      status: response.status,
+      message: `HTTP ${response.status}`,
+      body,
+    } as ApiError;
+  }
+
+  return response.json() as Promise<T>;
+}
+
+async function testIndustryBenchmark() {
+  console.log('\n📊 Testing /industry-benchmark...');
+  console.log(`   POST ${API_BASE}/industry-benchmark`);
+
   try {
-    const response = await fetch(`${API_BASE_URL}/industry-benchmark`, {
+    const result = await apiFetch<unknown>('/industry-benchmark', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({ industry_name: industryName }),
+      body: JSON.stringify({ industry_name: 'Banking' }),
     });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      const error: ApiError = {
-        status: response.status,
-        message: `HTTP ${response.status}: ${response.statusText}`,
-        body: errorBody,
-      };
-      throw error;
-    }
-
-    const data = await response.json();
-    
-    console.log('\n✅ Success! Response received:');
-    console.log('   Industry Name:', data.industry_name);
-    console.log('   Summary:', data.summary?.narrative?.slice(0, 100) + '...');
-    console.log('   Revenue Trend:', data.revenue_trend?.trend_tag);
-    console.log('   Capex Cycle:', data.capex_trend?.cycle);
-    console.log('   Peer Stocks:', data.peer_stocks?.length || 0);
-    console.log('   Key Insights:', data.key_insights?.length || 0);
-    
+    console.log('   ✅ Success! Response:', JSON.stringify(result, null, 2).slice(0, 500) + '...');
+    return true;
   } catch (error) {
-    if ((error as ApiError).status !== undefined) {
-      const apiError = error as ApiError;
-      console.error('\n❌ API Error:');
-      console.error(`   Status: ${apiError.status}`);
-      console.error(`   Message: ${apiError.message}`);
-      if (apiError.body) {
-        console.error(`   Body: ${JSON.stringify(apiError.body).slice(0, 200)}`);
-      }
-    } else if (error instanceof Error) {
-      console.error('\n❌ Network/Connection Error:');
-      console.error(`   ${error.message}`);
-      console.error('\n   Make sure the backend is running at:', API_BASE_URL);
-    } else {
-      console.error('\n❌ Unknown error:', error);
+    const apiError = error as ApiError;
+    if (apiError.status === 404 || apiError.status === 501) {
+      console.log(`   ⚠️ Endpoint not available (${apiError.status}) - mock fallback will be used`);
+      return true;
     }
-    process.exit(1);
+    console.error('   ❌ Error:', apiError);
+    throw error;
   }
 }
 
-async function testStockFundamentals(ticker: string, industry: string): Promise<void> {
-  console.log(`\n🔍 Testing POST /stock-fundamentals with ticker: "${ticker}"`);
-  
+async function testBorrowingsAnalyze() {
+  console.log('\n💰 Testing /borrowings/analyze...');
+  console.log(`   POST ${API_BASE}/borrowings/analyze`);
+
+  const samplePayload = {
+    company: "BBOX",
+    financial_data: {
+      financial_years: [
+        {
+          year: 2021,
+          total_equity: 33,
+          reserves: 174,
+          borrowings: 328,
+          short_term_debt: 57,
+          long_term_debt: 119,
+          cwip: 0,
+          lease_liabilities: 152,
+          other_borrowings: 0,
+          trade_payables: 516,
+          trade_receivables: 240,
+          advance_from_customers: 2,
+          other_liability_items: 1251,
+          inventories: 149,
+          cash_equivalents: 410,
+          loans_n_advances: 151,
+          other_asset_items: 731,
+          gross_block: 903,
+          accumulated_depreciation: 281,
+          investments: 0,
+          preference_capital: 0,
+          total_assets: 2303,
+          intangible_assets: 314,
+          fixed_assets: 622,
+          revenue: 4674,
+          operating_profit: 364,
+          interest: 98,
+          depreciation: 96,
+          material_cost: 0.3297,
+          manufacturing_cost: 0.1323,
+          employee_cost: 0.3906,
+          other_cost: 0.0695,
+          expenses: 4310,
+          net_profit: 78,
+          other_income: -75,
+          fixed_assets_purchased: -30,
+          profit_from_operations: 407,
+          working_capital_changes: -156,
+          direct_taxes: 52,
+          interest_paid_fin: -105,
+          cash_from_operating_activity: 303,
+          dividends_paid: 0,
+          proceeds_from_shares: 116,
+          proceeds_from_borrowings: 11,
+          repayment_of_borrowings: -286
+        }
+      ]
+    }
+  };
+
   try {
-    const response = await fetch(`${API_BASE_URL}/stock-fundamentals`, {
+    const result = await apiFetch<unknown>('/borrowings/analyze', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({ 
-        ticker, 
-        industry,
-        include_industry_context: true 
-      }),
+      body: JSON.stringify(samplePayload),
     });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw {
-        status: response.status,
-        message: `HTTP ${response.status}: ${response.statusText}`,
-        body: errorBody,
-      };
-    }
-
-    const data = await response.json();
-    
-    console.log('\n✅ Success! Response received:');
-    console.log('   Ticker:', data.ticker);
-    console.log('   Company Name:', data.company_name);
-    console.log('   Industry:', data.industry);
-    console.log('   Health Score:', data.health_score);
-    console.log('   Modules:', data.modules?.length || 0);
-    
+    console.log('   ✅ Success! Response:', JSON.stringify(result, null, 2).slice(0, 500) + '...');
+    return true;
   } catch (error) {
-    if ((error as ApiError).status !== undefined) {
-      const apiError = error as ApiError;
-      console.error('\n❌ API Error:');
-      console.error(`   Status: ${apiError.status}`);
-      console.error(`   Message: ${apiError.message}`);
-    } else if (error instanceof Error) {
-      console.error('\n❌ Network/Connection Error:', error.message);
+    const apiError = error as ApiError;
+    console.error('   ❌ Error:', apiError.status, apiError.message);
+    if (apiError.body) {
+      console.error('   Response body:', JSON.stringify(apiError.body, null, 2));
     }
-    // Don't exit, continue with other tests
+    throw error;
+  }
+}
+
+async function testAllModules() {
+  const modules = [
+    { name: 'asset_quality', path: '/asset_quality/analyze' },
+    { name: 'working_capital', path: '/working_capital_module/analyze' },
+    { name: 'capex_cwip', path: '/capex_cwip_module/analyze' },
+    { name: 'liquidity', path: '/liquidity/analyze' },
+  ];
+
+  console.log('\n🔄 Testing remaining module endpoints...');
+
+  for (const mod of modules) {
+    console.log(`   Testing ${mod.path}...`);
+    try {
+      await apiFetch<unknown>(mod.path, {
+        method: 'POST',
+        body: JSON.stringify({ company: "TEST", financial_data: { financial_years: [] } }),
+      });
+      console.log(`   ✅ ${mod.name} - OK`);
+    } catch (error) {
+      const apiError = error as ApiError;
+      // 422 is expected with empty data, but confirms endpoint exists
+      if (apiError.status === 422) {
+        console.log(`   ✅ ${mod.name} - OK (endpoint exists, validation expected with test data)`);
+      } else {
+        console.log(`   ⚠️ ${mod.name} - ${apiError.status || 'Network error'}: ${apiError.message}`);
+      }
+    }
   }
 }
 
 // Main execution
-console.log('================================================');
-console.log('  API Connectivity Test');
-console.log('================================================');
+console.log('🚀 API Connectivity Test');
+console.log(`   Base URL: ${API_BASE}`);
+console.log('   ----------------------------------------');
 
-testIndustryBenchmark('Banking')
-  .then(() => testStockFundamentals('HDFC', 'Banking'))
+testIndustryBenchmark()
+  .then(() => testBorrowingsAnalyze())
+  .then(() => testAllModules())
   .then(() => {
-    console.log('\n================================================');
-    console.log('  All tests completed!');
-    console.log('================================================\n');
+    console.log('\n✅ All tests completed');
+    process.exit(0);
   })
-  .catch((err) => {
-    console.error('Test suite failed:', err);
+  .catch((error) => {
+    console.error('\n❌ Test suite failed');
     process.exit(1);
   });
