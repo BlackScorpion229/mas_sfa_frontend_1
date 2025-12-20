@@ -33,6 +33,7 @@ export {
   postAnalyzeStock,
   postChat,
   isUsingMockIndustryData,
+  isUsingMockStockData,
   // Module analyze endpoints
   postBorrowingsAnalyze,
   postAssetQualityAnalyze,
