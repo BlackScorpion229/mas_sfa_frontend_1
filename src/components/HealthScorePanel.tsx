@@ -1,7 +1,8 @@
 import { StockAnalysis } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Activity, TrendingUp, TrendingDown } from 'lucide-react';
+import { Activity, Building2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface HealthScorePanelProps {
   analysis: StockAnalysis;
@@ -76,6 +77,17 @@ export function HealthScorePanel({ analysis }: HealthScorePanelProps) {
             </div>
             <div className="text-xs text-muted-foreground mt-1">Red</div>
           </div>
+        </div>
+
+        {/* Ticker & Industry Badges */}
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="outline" className="font-mono">
+            {analysis.ticker}
+          </Badge>
+          <Badge variant="secondary">
+            <Building2 className="w-3 h-3 mr-2" />
+            {analysis.industry}
+          </Badge>
         </div>
 
         {/* Summary Metrics */}

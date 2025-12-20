@@ -3,9 +3,9 @@ import { Header } from '@/components/Header';
 import { ModuleCard } from '@/components/ModuleCard';
 import { HealthScorePanel } from '@/components/HealthScorePanel';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+
 import { useStockAnalysis } from '@/hooks/useStockAnalysis';
-import { ArrowLeft, Building2, MessageSquare, Loader2 } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Loader2 } from 'lucide-react';
 
 export default function StockAnalysis() {
   const { ticker } = useParams<{ ticker: string }>();
@@ -44,29 +44,19 @@ export default function StockAnalysis() {
       <Header />
       
       <main className="container py-8 lg:py-12">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link to={`/industry/${encodeURIComponent(industry)}`}>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Industry
-            </Button>
-          </Link>
-          <div className="h-6 w-px bg-border" />
-          <Badge variant="outline" className="font-mono">
-            {data.ticker}
-          </Badge>
-          <Badge variant="secondary">
-            <Building2 className="w-3 h-3 mr-2" />
-            {data.industry}
-          </Badge>
-        </div>
-
         {/* Page Header */}
         <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            {data.company_name}
-          </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              {data.company_name}
+            </h1>
+            <Link to={`/industry/${encodeURIComponent(industry)}`}>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Back to Industry
+              </Button>
+            </Link>
+          </div>
           <p className="text-muted-foreground">
             Comprehensive fundamental analysis across 10 analytical modules
           </p>
