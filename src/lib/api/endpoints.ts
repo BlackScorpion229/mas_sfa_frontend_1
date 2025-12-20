@@ -22,6 +22,7 @@
 import { request, apiFetch, isApiError } from './client';
 import { normalizeFinancialPayload } from './normalize';
 import { generateMockIndustryBenchmark } from './mockIndustryBenchmark';
+import { generateStockAnalysis } from '@/data/mockData';
 import type {
   IndustryBenchmarkRequest,
   IndustryBenchmarkResponse,
@@ -34,8 +35,9 @@ import type {
   ModuleAnalyzeResponse,
 } from './types';
 
-// Flag to track if we've already warned about mock data usage
-let mockWarningShown = false;
+// Flags to track if we've already warned about mock data usage
+let mockIndustryWarningShown = false;
+let mockStockWarningShown = false;
 
 /**
  * Fetch industry benchmark data with mock fallback
@@ -56,17 +58,17 @@ export async function postIndustryBenchmark(
   
   try {
     const result = await request<IndustryBenchmarkResponse>('POST', '/industry-benchmark', payload);
-    mockWarningShown = false; // Reset flag on successful real API call
+    mockIndustryWarningShown = false; // Reset flag on successful real API call
     return result;
   } catch (error) {
-    // Check if this is a "not implemented" type error
+    // Check if this is a "not implemented" type error or network error
     if (isApiError(error) && (error.status === 404 || error.status === 501 || error.status === 0)) {
-      if (!mockWarningShown) {
+      if (!mockIndustryWarningShown) {
         console.warn(
           '⚠️ Using local mock for industry analysis — backend endpoint not yet available. ' +
           'Error:', error.message
         );
-        mockWarningShown = true;
+        mockIndustryWarningShown = true;
       }
       return generateMockIndustryBenchmark(industryName);
     }
@@ -78,11 +80,12 @@ export async function postIndustryBenchmark(
  * Check if industry benchmark is using mock data
  */
 export function isUsingMockIndustryData(): boolean {
-  return mockWarningShown;
+  return mockIndustryWarningShown;
 }
 
 /**
  * Fetch stock fundamentals with optional industry context
+ * Falls back to mock data when backend is unavailable
  * 
  * @param ticker - Stock ticker symbol
  * @param industry - Optional industry name for context
@@ -99,7 +102,33 @@ export async function postStockFundamentals(
     industry,
     include_industry_context: includeIndustryContext,
   };
-  return request<StockFundamentalsResponse>('POST', '/stock-fundamentals', payload);
+  
+  try {
+    const result = await request<StockFundamentalsResponse>('POST', '/stock-fundamentals', payload);
+    mockStockWarningShown = false; // Reset flag on successful real API call
+    return result;
+  } catch (error) {
+    // Check if this is a network error or "not implemented" error
+    if (isApiError(error) && (error.status === 404 || error.status === 501 || error.status === 0)) {
+      if (!mockStockWarningShown) {
+        console.warn(
+          '⚠️ Using local mock for stock analysis — backend server not available. ' +
+          'Error:', error.message
+        );
+        mockStockWarningShown = true;
+      }
+      // Return mock data using the generateStockAnalysis function
+      return generateStockAnalysis(ticker, industry || 'General') as StockFundamentalsResponse;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Check if stock analysis is using mock data
+ */
+export function isUsingMockStockData(): boolean {
+  return mockStockWarningShown;
 }
 
 /**
