@@ -2,31 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IndustrySelector } from '@/components/IndustrySelector';
 import { Button } from '@/components/ui/button';
-import { Header } from '@/components/Header';
-import { ArrowRight, BarChart3, Brain, LineChart, Shield } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ArrowRight, BarChart3, TrendingUp } from 'lucide-react';
 
 const features = [
-  {
-    icon: Brain,
-    title: 'AI-Powered Analysis',
-    description: 'Advanced algorithms analyze industry trends and company fundamentals in real-time.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Industry Benchmarks',
-    description: 'Compare companies against sector-specific financial metrics and standards.',
-  },
-  {
-    icon: LineChart,
-    title: 'Trend Detection',
-    description: 'Identify revenue, capex, and profitability patterns across market cycles.',
-  },
-  {
-    icon: Shield,
-    title: 'Risk Assessment',
-    description: 'Comprehensive red flag detection and risk scoring for informed decisions.',
-  },
+  { icon: TrendingUp, label: 'Trend Analysis' },
+  { icon: TrendingUp, label: 'Market Insights' },
+  { icon: TrendingUp, label: 'Opportunity Scanner' },
 ];
 
 export default function Index() {
@@ -38,93 +19,110 @@ export default function Index() {
     if (!selectedIndustry) return;
     
     setIsLoading(true);
-    // Simulate API call delay
     await new Promise((resolve) => setTimeout(resolve, 800));
     navigate(`/industry/${encodeURIComponent(selectedIndustry)}`);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="container py-16 lg:py-24">
-        {/* Hero Section */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6 animate-fade-in">
-            <Brain className="w-4 h-4" />
-            AI-Powered Financial Intelligence
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      {/* Left Hero Section - Dark */}
+      <div className="lg:w-3/5 bg-[#0a1929] relative overflow-hidden flex flex-col justify-center p-8 lg:p-16 min-h-[60vh] lg:min-h-screen">
+        {/* Abstract network background pattern */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-teal-400 rounded-full" />
+          <div className="absolute top-1/3 left-1/2 w-1.5 h-1.5 bg-teal-400 rounded-full" />
+          <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-teal-400 rounded-full" />
+          <div className="absolute top-2/3 left-2/3 w-2 h-2 bg-teal-400 rounded-full" />
+          <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-teal-400 rounded-full" />
+          <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-teal-400 rounded-full" />
+          {/* Connection lines effect */}
+          <svg className="absolute inset-0 w-full h-full">
+            <line x1="25%" y1="25%" x2="50%" y2="33%" stroke="rgba(45, 212, 191, 0.2)" strokeWidth="1" />
+            <line x1="50%" y1="33%" x2="33%" y2="50%" stroke="rgba(45, 212, 191, 0.2)" strokeWidth="1" />
+            <line x1="33%" y1="50%" x2="66%" y2="66%" stroke="rgba(45, 212, 191, 0.2)" strokeWidth="1" />
+            <line x1="66%" y1="66%" x2="25%" y2="75%" stroke="rgba(45, 212, 191, 0.2)" strokeWidth="1" />
+          </svg>
+        </div>
+
+        <div className="relative z-10 max-w-2xl">
+          {/* Icon */}
+          <div className="w-14 h-14 bg-[#1a3a4a] rounded-xl flex items-center justify-center mb-8">
+            <BarChart3 className="w-7 h-7 text-white" />
           </div>
-          
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 animate-slide-up">
-            Start Your{' '}
-            <span className="text-gradient">Analysis</span>
+
+          {/* Main Heading */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            Industry based<br />
+            Stock Intelligence<br />
+            Engine
           </h1>
-          
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '100ms' }}>
-            Select an industry to generate a comprehensive AI-powered analysis with benchmarks, 
-            peer comparisons, and actionable insights.
+
+          {/* Subtitle */}
+          <p className="text-lg text-gray-300 mb-12 max-w-xl leading-relaxed">
+            AI-driven Industry based Stock Analysis in Seconds. Get comprehensive insights into market trends, opportunities and risks.
           </p>
 
+          {/* Feature Pills */}
+          <div className="flex flex-wrap gap-4">
+            {features.map((feature) => (
+              <div
+                key={feature.label}
+                className="flex items-center gap-2 text-gray-300 text-sm"
+              >
+                <feature.icon className="w-4 h-4 text-teal-400" />
+                <span>{feature.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Form Section - Light */}
+      <div className="lg:w-2/5 bg-[#f5f5f5] flex items-center justify-center p-8 lg:p-16 min-h-[40vh] lg:min-h-screen">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+          {/* Form Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Start Your Analysis
+            </h2>
+            <p className="text-gray-600 text-sm">
+              Select an industry to generate a comprehensive AI-powered analysis
+            </p>
+          </div>
+
           {/* Industry Selector */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Industry
+            </label>
             <IndustrySelector
               value={selectedIndustry}
               onChange={setSelectedIndustry}
             />
-            <Button
-              variant="hero"
-              size="lg"
-              onClick={handleAnalyze}
-              disabled={!selectedIndustry || isLoading}
-              className="w-full sm:w-auto"
-            >
-              {isLoading ? (
-                <>
-                  <span className="animate-pulse">Analyzing...</span>
-                </>
-              ) : (
-                <>
-                  Show Industry Analysis
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </>
-              )}
-            </Button>
           </div>
-        </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {features.map((feature, index) => (
-            <div
-              key={feature.title}
-              className={cn(
-                'group p-6 rounded-2xl',
-                'bg-card border border-border/50',
-                'hover:border-primary/30 hover:bg-card/80',
-                'transition-all duration-300',
-                'animate-slide-up'
-              )}
-              style={{ animationDelay: `${300 + index * 100}ms` }}
-            >
-              <div className="p-3 rounded-xl bg-primary/10 w-fit mb-4 group-hover:bg-primary/20 transition-colors">
-                <feature.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
-                {feature.title}
-              </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
+          {/* Submit Button */}
+          <Button
+            onClick={handleAnalyze}
+            disabled={!selectedIndustry || isLoading}
+            className="w-full bg-teal-500 hover:bg-teal-600 text-white py-6 text-base font-medium rounded-lg"
+          >
+            {isLoading ? (
+              <span className="animate-pulse">Analyzing...</span>
+            ) : (
+              <>
+                Show Industry Analysis
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </>
+            )}
+          </Button>
 
-        {/* Background Decorations */}
-        <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-accent/5 rounded-full blur-3xl" />
+          {/* Footer Text */}
+          <p className="text-center text-xs text-gray-500 mt-6">
+            Analysis includes market trends, opportunities, and risk assessment
+          </p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
