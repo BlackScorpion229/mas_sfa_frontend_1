@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils';
 import {
   ArrowLeft,
   TrendingUp,
-  Building2,
   FileText,
   DollarSign,
   Lightbulb,
@@ -70,26 +69,19 @@ export default function IndustryAnalysis() {
       <Header />
       
       <main className="container py-8 lg:py-12">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-          </Link>
-          <div className="h-6 w-px bg-border" />
-          <Badge variant="outline" className="font-normal">
-            <Building2 className="w-3 h-3 mr-2" />
-            {data.industry_name}
-          </Badge>
-        </div>
-
         {/* Page Header */}
         <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            {data.industry_name} Industry Analysis
-          </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              {data.industry_name} Industry Analysis
+            </h1>
+            <Link to="/">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+            </Link>
+          </div>
           <p className="text-muted-foreground">
             Comprehensive AI-powered analysis with benchmarks and peer comparisons
           </p>
